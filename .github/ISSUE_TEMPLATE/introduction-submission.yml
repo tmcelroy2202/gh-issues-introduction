@@ -1,0 +1,24 @@
+name: Submit or update an introduction
+description: Fetch your introduction JSON from webpages.charlotte.edu
+title: "[Introduction submission] "
+labels: [introduction-submission]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Submit a direct link to your published introduction JSON. The workflow checks and fetches the file, then adds or replaces the record for its username.
+  - type: input
+    id: json_url
+    attributes:
+      label: Introduction JSON URL
+      description: A direct .json URL under https://webpages.charlotte.edu/<username>/
+      placeholder: https://webpages.charlotte.edu/username/itis3135/introduction.json
+    validations:
+      required: true
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Confirmation
+      options:
+        - label: I confirm this is my public introduction JSON and it may be included in this repository's public data file.
+          required: true
