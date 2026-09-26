@@ -7,6 +7,7 @@ import json
 import os
 import re
 import sys
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -130,6 +131,11 @@ def main() -> None:
             output.write(f"username={username}\n")
     except (OSError, json.JSONDecodeError, ValueError) as error:
         print(f"::error::{error}", file=sys.stderr)
+        output_path = os.environ.get("GITHUB_OUTPUT")
+        if output_path:
+            delimiter = f"FEEDBACK_{uuid.uuid4().hex}"
+            with open(output_path, "a", encoding="utf-8") as output:
+                output.write(f"feedback<<{delimiter}\n{error}\n{delimiter}\n")
         raise SystemExit(1) from error
 
 

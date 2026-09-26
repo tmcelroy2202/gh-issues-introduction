@@ -3,6 +3,8 @@ name: Update introductions data
 on:
   issues:
     types: [opened, edited, reopened]
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: write
@@ -14,7 +16,9 @@ concurrency:
 
 jobs:
   update-data:
-    if: startsWith(github.event.issue.title, '[Introduction submission]')
+    if: >-
+      startsWith(github.event.issue.title, '[Introduction submission]') &&
+      (github.event_name != 'issue_comment' || github.event.comment.user.login == github.event.issue.user.login)
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -48,4 +52,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           REPOSITORY: ${{ github.repository }}
-        run: gh issue comment "$ISSUE_NUMBER" --repo "$REPOSITORY" --body 'The submission could not be processed. Check that the issue contains a direct, publicly accessible introduction JSON URL under `webpages.charlotte.edu` and that the file matches the introduction JSON format. You can edit this issue and resubmit.'
+          FEEDBACK: ${{ steps.update.outputs.feedback }}
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPOSITORY" --body "The submission could not be processed:
+
+          $FEEDBACK
+
+          Fix the item above, then edit this issue or leave a new comment to retry processing."
