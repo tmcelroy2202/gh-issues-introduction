@@ -39,13 +39,25 @@ jobs:
           git add introductions.json
           git commit -m "Update introduction for ${{ steps.update.outputs.username }}"
           git push
-      - name: Close submission issue
+      - name: Comment with validation and field audit
         if: success()
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           REPOSITORY: ${{ github.repository }}
-        run: gh issue close "$ISSUE_NUMBER" --repo "$REPOSITORY" --comment "Introduction data validated and added to [introductions.json](https://raw.githubusercontent.com/$REPOSITORY/main/introductions.json)."
+          REPORT: ${{ steps.update.outputs.report }}
+          USERNAME: ${{ steps.update.outputs.username }}
+          OPERATION: ${{ steps.update.outputs.operation }}
+        run: |
+          body=$(printf '## Introduction submission %s\n\n%s\n\nRecord **%s** for `%s`. The class data file is [introductions.json](https://raw.githubusercontent.com/%s/main/introductions.json).' "$OPERATION" "$REPORT" "$OPERATION" "$USERNAME" "$REPOSITORY")
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPOSITORY" --body "$body"
+      - name: Close successfully processed issue
+        if: success() && github.event.issue.state == 'open'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPOSITORY: ${{ github.repository }}
+        run: gh issue close "$ISSUE_NUMBER" --repo "$REPOSITORY"
       - name: Comment on failed submission
         if: failure()
         env:
@@ -53,9 +65,11 @@ jobs:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           REPOSITORY: ${{ github.repository }}
           FEEDBACK: ${{ steps.update.outputs.feedback }}
+          REPORT: ${{ steps.update.outputs.report }}
         run: |
-          gh issue comment "$ISSUE_NUMBER" --repo "$REPOSITORY" --body "The submission could not be processed:
-
-          $FEEDBACK
-
-          Fix the item above, then edit this issue or leave a new comment to retry processing."
+          if [ -n "$FEEDBACK" ]; then
+            body=$(printf '## Introduction submission was not accepted\n\n%s\n\nFix the reported issue, then edit the issue or leave a new comment to retry.' "$FEEDBACK")
+          else
+            body=$(printf '## Introduction submission processing failed\n\n%s\n\nThe JSON passed inspection, but a later processing step failed. See this run’s logs and retry by editing the issue or leaving a new comment.' "$REPORT")
+          fi
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPOSITORY" --body "$body"
