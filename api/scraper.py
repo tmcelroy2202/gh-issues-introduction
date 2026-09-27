@@ -15,21 +15,30 @@ REQUIRED_FIELDS = {
     "acknowledgmentDate",
     "adjectives",
     "animal",
+    "prettyNameDivider",
     "img",
     "caption",
-    "personalStatement",
+    "personalInfo",
+    "courses",
+    "quote",
+    "quoteAuthor",
+    "footerLinks",
+}
+PERSONAL_INFO_FIELDS = {
+    "statement",
     "personalBackground",
     "professionalBackground",
     "academicBackground",
     "primaryWorkComputer",
     "primaryWorkLocation",
     "alternateComputerLocation",
-    "courses",
-    "quote",
-    "quoteAuthor",
-    "footerLinks",
 }
-COURSE_FIELDS = {"department", "courseNumber", "courseTitle", "reasonfortaking"}
+COURSE_FIELDS = {"department", "courseNumber", "courseTitle", "reasonForTaking"}
+LEGACY_TOP_LEVEL_FIELDS = {
+    "divider", "personalStatement", "personalBackground", "professionalBackground",
+    "academicBackground", "primaryWorkComputer", "primaryWorkLocation",
+    "alternateComputerLocation",
+}
 IMAGE_DATA_PATTERN = re.compile(r"^data:image/[A-Za-z0-9.+-]+;base64,")
 USERNAME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
 MAX_JSON_SIZE = 5 * 1024 * 1024
@@ -77,6 +86,14 @@ def validate_introduction_json(payload: object) -> dict:
     if not isinstance(payload, dict):
         raise ScrapeError(422, "The linked JSON must contain an introduction object.")
 
+    legacy_fields = sorted(LEGACY_TOP_LEVEL_FIELDS.intersection(payload))
+    if legacy_fields:
+        raise ScrapeError(
+            422,
+            "The JSON uses outdated top-level keys: " + ", ".join(legacy_fields)
+            + ". Use 'prettyNameDivider' and group statement/background/computer fields under 'personalInfo'.",
+        )
+
     missing_fields = sorted(REQUIRED_FIELDS.difference(payload))
     if missing_fields:
         raise ScrapeError(
@@ -86,8 +103,20 @@ def validate_introduction_json(payload: object) -> dict:
         )
 
     for field in REQUIRED_FIELDS.difference({"courses", "footerLinks"}):
+        if field == "personalInfo":
+            continue
         if not isinstance(payload[field], str):
             raise ScrapeError(422, f"The introduction value '{field}' must be a string.")
+
+    personal_info = payload["personalInfo"]
+    if not isinstance(personal_info, dict):
+        raise ScrapeError(422, "The 'personalInfo' value must be an object.")
+    missing_personal_fields = sorted(PERSONAL_INFO_FIELDS.difference(personal_info))
+    if missing_personal_fields:
+        raise ScrapeError(422, "The 'personalInfo' object is missing keys: " + ", ".join(missing_personal_fields))
+    for field in PERSONAL_INFO_FIELDS:
+        if not isinstance(personal_info[field], str):
+            raise ScrapeError(422, f"The personalInfo value '{field}' must be a string.")
 
     image_data = payload["img"].strip()
     if not IMAGE_DATA_PATTERN.match(image_data):
@@ -104,6 +133,8 @@ def validate_introduction_json(payload: object) -> dict:
         if not isinstance(course, dict):
             raise ScrapeError(422, f"Course {index} must be an object.")
         missing_course_fields = sorted(COURSE_FIELDS.difference(course))
+        if "reasonfortaking" in course:
+            raise ScrapeError(422, f"Course {index} uses 'reasonfortaking'; rename it to 'reasonForTaking'.")
         if missing_course_fields:
             raise ScrapeError(
                 422,

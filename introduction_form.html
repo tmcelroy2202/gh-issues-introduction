@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thomas McElroy's Terrific Muskrat | ITIS3135 | Introduction Form</title>
+    <link rel="stylesheet" href="styles/default.css">
+    <link rel="stylesheet" href="styles/introduction-form.css">
+    <link rel="icon" href="images/tommyfavicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://divonbriesen.github.io/teaching/tools/standards-check.js" defer></script>
+    <script src="https://lint.page/kit/4d0fe3.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <!-- These divs are needed as targets for the reusable header and footer components. -->
+    <div data-include="components/header.html"></div>
+
+    <main>
+        <h2>Introduction Form</h2>
+        <h3>Please Submit the Form Below.</h3>
+
+        <!-- These divs group course controls, output panels, and the generated introduction; their classes support shared layout styling, and their ids connect form labels and JavaScript updates. -->
+        <form id="introduction-form">
+            <fieldset>
+                <legend>Name and Acknowledgment</legend>
+                <div class="form-grid">
+                    <label for="first-name">First name
+                        <input id="first-name" name="firstName" type="text" value="Thomas" placeholder="First name" required>
+                    </label>
+                    <label for="middle-name">Middle name (optional)
+                        <input id="middle-name" name="middleName" type="text" value="A." placeholder="Middle name">
+                    </label>
+                    <label for="nickname">Nickname (optional)
+                        <input id="nickname" name="nickname" type="text" value="Tommy" placeholder="Nickname">
+                    </label>
+                    <label for="last-name">Last name
+                        <input id="last-name" name="lastName" type="text" value="McElroy" placeholder="Last name" required>
+                    </label>
+                    <label for="name-divider">Name and mascot divider (optional)
+                        <input id="name-divider" name="prettyNameDivider" type="text" value="~" placeholder="Divider symbol">
+                    </label>
+                </div>
+                <label for="acknowledgment">Acknowledgment statement
+                    <textarea id="acknowledgment" name="acknowledgment" rows="2" placeholder="I understand that this is a public document..." required>I understand that this is a public document, and I won't put anything here I wouldn't want anyone to see.</textarea>
+                </label>
+                <label for="acknowledgment-date">Acknowledgment date
+                    <input id="acknowledgment-date" name="acknowledgmentDate" type="text" value="8/20/26" placeholder="MM/DD/YY" pattern="[0-9]{1,2}/[0-9]{1,2}/[0-9]{2,4}" title="Enter the date as MM/DD/YY" required>
+                </label>
+                <div class="form-grid">
+                    <label for="mascot-adjective">Mascot adjective(s)
+                        <input id="mascot-adjective" name="adjectives" type="text" value="Terrific" placeholder="Adjective(s)" required>
+                    </label>
+                    <label for="mascot-animal">Mascot animal
+                        <input id="mascot-animal" name="animal" type="text" value="Muskrat" placeholder="Animal" required>
+                    </label>
+                </div>
+            </fieldset>
+
+            <hr>
+
+            <fieldset>
+                <legend>Picture and Personal Statement</legend>
+                <label for="image-source">Image data (required; embedded as Base64)
+                    <input id="image-source" name="img" type="text" value="images/tommyforintroduction.jpeg" placeholder="Base64 image data" readonly required>
+                </label>
+                <label for="picture-upload">Upload a picture to replace the image above (optional)
+                    <input id="picture-upload" name="pictureUpload" type="file" accept="image/*">
+                </label>
+                <img id="image-preview" src="images/tommyforintroduction.jpeg" alt="my face">
+                <label for="picture-alt">Picture description
+                    <input id="picture-alt" name="pictureAlt" type="text" value="my face" placeholder="Describe the picture" required>
+                </label>
+                <label for="picture-caption">Picture caption
+                    <input id="picture-caption" name="caption" type="text" value="Me, at a friend's house" placeholder="Caption for the picture" required>
+                </label>
+                <label for="personal-statement">Personal statement
+                    <textarea id="personal-statement" name="personalStatement" rows="4" placeholder="Write your personal statement" required>My name is Thomas McElroy, I am 19 years old, and I just transferred from CPCC to UNCC. This is my first semester here, and I am a Computer Science major, IT Concentration. I would like to work in Systems Administration after finishing my degree.</textarea>
+                </label>
+            </fieldset>
+
+            <fieldset>
+                <legend>Introduction Details</legend>
+                <label for="personal-background">Personal background
+                    <textarea id="personal-background" name="personalBackground" rows="2" placeholder="Personal background" required>I have lived in Charlotte my whole life, and been interested in computers for most of it.</textarea>
+                </label>
+                <label for="professional-background">Professional background
+                    <textarea id="professional-background" name="professionalBackground" rows="2" placeholder="Professional background" required>I work at the Microcenter on South Boulevard.</textarea>
+                </label>
+                <label for="academic-background">Academic background
+                    <textarea id="academic-background" name="academicBackground" rows="2" placeholder="Academic background" required>I just transferred from CPCC with an Associates degree, and hope to complete my Bachelors degree here in 2028.</textarea>
+                </label>
+                <label for="primary-computer">Primary work computer (type, OS, and version)
+                    <textarea id="primary-computer" name="primaryWorkComputer" rows="3" placeholder="Describe your primary work computer" required>Lenovo Thinkpad x280, Arch Linux, Linux kernel version 7.0.12-arch1-1 ( Arch does not have clear versioning like fixed release operating systems ). Dual booted with Windows 11, which I can use for any exams that may need lockdown browser, but almost never use otherwise.</textarea>
+                </label>
+                <label for="primary-location">Primary work location
+                    <textarea id="primary-location" name="primaryWorkLocation" rows="2" placeholder="Primary work location" required>UNCC Campus, in any of the Woodward study rooms.</textarea>
+                </label>
+                <label for="alternate-computer">Alternate computer and location
+                    <textarea id="alternate-computer" name="alternateComputerLocation" rows="2" placeholder="Describe an alternate computer and location" required>If I couldn’t use my x280, or wasn’t on campus, I would use any of my other laptops, or if at home, desktops, likely from my bed.</textarea>
+                </label>
+            </fieldset>
+
+            <fieldset>
+                <legend>Courses I'm Taking, &amp; Why</legend>
+                <template id="default-course-data">[
+                    {
+                        "department": "ITIS",
+                        "courseNumber": "3200",
+                        "courseTitle": "Intro to Info Security and Priv",
+                        "reasonForTaking": "I am interested in Cybersecurity, privacy, and server administration, so information security knowledge is helpful to me."
+                    },
+                    {
+                        "department": "ITIS",
+                        "courseNumber": "3130",
+                        "courseTitle": "Human Centered Computing",
+                        "reasonForTaking": "When designing UIs, it is valuable to be able to think about how a normal user will approach them, because I am far from a normal user ( I use vim keybindings for all apps, and prefer to do everything in a terminal ), and so i struggle sometimes to imagine how people will approach the things I make. This class teaches you how to do that."
+                    },
+                    {
+                        "department": "ITSC",
+                        "courseNumber": "2175",
+                        "courseTitle": "Logic and Algorithms",
+                        "reasonForTaking": "This is a required course for a Computer Science degree, and gets you better at discrete math, boolean algebra, and conditional statements, which are helpful for programming."
+                    },
+                    {
+                        "department": "ITSC",
+                        "courseNumber": "2600",
+                        "courseTitle": "Computing Professionals II",
+                        "reasonForTaking": "This is a required course for a Computer Science degree, and helps you with information needed with getting through college, and applying for jobs."
+                    },
+                    {
+                        "department": "ITSC",
+                        "courseNumber": "3135",
+                        "courseTitle": "Frontend Web App Development",
+                        "reasonForTaking": "I am interested in creating tools and automations for things, and so being able to make web frontends for those tools and automations is hugely helpful, so that other people can use them."
+                    }
+                ]</template>
+                <div id="course-list" class="course-list" aria-live="polite"></div>
+                <button id="add-course" type="button">Add Course</button>
+            </fieldset>
+
+            <fieldset>
+                <legend>Quote and Optional Details</legend>
+                <label for="quote">Favorite quote
+                    <textarea id="quote" name="quote" rows="2" placeholder="A quote you like" required>“You are all better than you think you are. You are designed not to believe it when you hear it from yourself.”</textarea>
+                </label>
+                <label for="quote-author">Quote author or source
+                    <input id="quote-author" name="quoteAuthor" type="text" value="Jeff Winger (Community S1E1)" placeholder="Quote author or source" required>
+                </label>
+                <label for="funny-item">Funny or interesting item to remember me by (optional)
+                    <textarea id="funny-item" name="funnyItem" rows="2" placeholder="Something funny or interesting">I can type 180 words per minute.</textarea>
+                </label>
+                <label for="something-to-share">Something I'd also like to share (optional)
+                    <textarea id="something-to-share" name="somethingToShare" rows="2" placeholder="Something else you'd like to share">I can ride a bike many miles with no hands.</textarea>
+                </label>
+            </fieldset>
+
+            <fieldset>
+                <legend>Footer Links</legend>
+                <p class="field-help">Edit the link text and address for each footer link.</p>
+                <div class="form-grid">
+                    <label for="footer-label-1">Link 1 text
+                        <input id="footer-label-1" name="footerLabel1" type="text" value="CLT Web" placeholder="Link text" required>
+                    </label>
+                    <label for="footer-url-1">Link 1 URL
+                        <input id="footer-url-1" name="footerUrl1" type="url" value="https://webpages.charlotte.edu/tmcelro3/" placeholder="https://example.com" required>
+                    </label>
+                    <label for="footer-label-2">Link 2 text
+                        <input id="footer-label-2" name="footerLabel2" type="text" value="GitHub.io" placeholder="Link text" required>
+                    </label>
+                    <label for="footer-url-2">Link 2 URL
+                        <input id="footer-url-2" name="footerUrl2" type="url" value="https://tmcelroy2202.github.io/" placeholder="https://example.com" required>
+                    </label>
+                    <label for="footer-label-3">Link 3 text
+                        <input id="footer-label-3" name="footerLabel3" type="text" value="GitHub" placeholder="Link text" required>
+                    </label>
+                    <label for="footer-url-3">Link 3 URL
+                        <input id="footer-url-3" name="footerUrl3" type="url" value="https://github.com/tmcelroy2202/" placeholder="https://example.com" required>
+                    </label>
+                    <label for="footer-label-4">Link 4 text
+                        <input id="footer-label-4" name="footerLabel4" type="text" value="freeCodeCamp" placeholder="Link text" required>
+                    </label>
+                    <label for="footer-url-4">Link 4 URL
+                        <input id="footer-url-4" name="footerUrl4" type="url" value="https://www.freecodecamp.org/thomas-mcelroy" placeholder="https://example.com" required>
+                    </label>
+                    <label for="footer-label-5">Link 5 text
+                        <input id="footer-label-5" name="footerLabel5" type="text" value="Codecademy" placeholder="Link text" required>
+                    </label>
+                    <label for="footer-url-5">Link 5 URL
+                        <input id="footer-url-5" name="footerUrl5" type="url" value="https://www.codecademy.com/profiles/giga5446778097" placeholder="https://example.com" required>
+                    </label>
+                    <label for="footer-label-6">Link 6 text
+                        <input id="footer-label-6" name="footerLabel6" type="text" value="LinkedIn" placeholder="Link text" required>
+                    </label>
+                    <label for="footer-url-6">Link 6 URL
+                        <input id="footer-url-6" name="footerUrl6" type="url" value="https://www.linkedin.com/in/thomas-mcelroy-b68bb4352/" placeholder="https://example.com" required>
+                    </label>
+                </div>
+            </fieldset>
+
+            <div class="button-row">
+                <button type="submit">Submit</button>
+                <button type="reset">Reset</button>
+                <button id="clear-form" type="button">Clear</button>
+            </div>
+        </form>
+
+        <section id="generator-controls" aria-label="Generate data outputs">
+            <h3 class="generator-heading">Generate Output</h3>
+            <p>Generate a fresh output after editing the form to include your current values.</p>
+            <label class="output-wrap-toggle" for="wrap-output">
+                <input id="wrap-output" type="checkbox">
+                Wrap output text
+            </label>
+            <div class="button-row">
+                <button type="button" data-output="html">Generate HTML</button>
+                <button type="button" data-output="json">Generate JSON</button>
+                <button type="button" data-output="xml">Generate XML</button>
+            </div>
+            <div id="output-panels" aria-live="polite"></div>
+        </section>
+
+        <div id="generated-introduction" hidden aria-live="polite"></div>
+    </main>
+
+    <!-- This div receives the footer rendered from the submitted link fields. -->
+    <div id="generated-footer" hidden></div>
+    <p id="start-over" class="centered" hidden><a href="introduction_form.html">Fill out the form again</a></p>
+    <div id="default-footer">
+        <div data-include="components/footer.html"></div>
+    </div>
+
+    <script src="scripts/HTMLInclude.min.js"></script>
+    <script src="scripts/introduction.js"></script>
+</body>
+</html>

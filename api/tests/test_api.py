@@ -23,25 +23,27 @@ SAMPLE_INTRODUCTION = {
     "lastName": "McElroy",
     "acknowledgment": "I understand this is public.",
     "acknowledgmentDate": "8/20/26",
-    "divider": "~",
+    "prettyNameDivider": "~",
     "adjectives": "Terrific",
     "animal": "Muskrat",
     "img": "data:image/png;base64,aW1hZ2U=",
     "pictureAlt": "my face",
     "caption": "Me, at a friend's house",
-    "personalStatement": "I study computer science.",
-    "personalBackground": "I live in Charlotte.",
-    "professionalBackground": "I work at Micro Center.",
-    "academicBackground": "I transferred from CPCC.",
-    "primaryWorkComputer": "ThinkPad running Linux.",
-    "primaryWorkLocation": "UNCC campus.",
-    "alternateComputerLocation": "My laptop at home.",
+    "personalInfo": {
+        "statement": "I study computer science.",
+        "personalBackground": "I live in Charlotte.",
+        "professionalBackground": "I work at Micro Center.",
+        "academicBackground": "I transferred from CPCC.",
+        "primaryWorkComputer": "ThinkPad running Linux.",
+        "primaryWorkLocation": "UNCC campus.",
+        "alternateComputerLocation": "My laptop at home."
+    },
     "courses": [
         {
             "department": "ITIS",
             "courseNumber": "3135",
             "courseTitle": "Frontend Web App Development",
-            "reasonfortaking": "It is useful for building web applications."
+            "reasonForTaking": "It is useful for building web applications."
         }
     ],
     "quote": "A favorite quote.",
@@ -138,6 +140,17 @@ class IntroductionAPITests(unittest.TestCase):
         invalid["img"] = "images/photo.jpeg"
         with self.assertRaisesRegex(ScrapeError, "Base64 data URL"):
             validate_introduction_json(invalid)
+
+    def test_rejects_legacy_inconsistent_field_names(self):
+        legacy_divider = copy.deepcopy(SAMPLE_INTRODUCTION)
+        legacy_divider["divider"] = legacy_divider.pop("prettyNameDivider")
+        with self.assertRaisesRegex(ScrapeError, "outdated top-level keys"):
+            validate_introduction_json(legacy_divider)
+
+        legacy_course = copy.deepcopy(SAMPLE_INTRODUCTION)
+        legacy_course["courses"][0]["reasonfortaking"] = legacy_course["courses"][0].pop("reasonForTaking")
+        with self.assertRaisesRegex(ScrapeError, "rename it to 'reasonForTaking'"):
+            validate_introduction_json(legacy_course)
 
     def test_example_exports_follow_the_intro_json_schema(self):
         examples = Path(__file__).resolve().parents[1]

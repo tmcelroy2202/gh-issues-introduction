@@ -25,3 +25,11 @@ After an update is committed, the raw URL may continue serving a cached older
 version for several minutes or longer; GitHub does not guarantee an exact refresh
 time. Adding a changing query parameter can help bypass some caches, but it is
 not a guaranteed instant-update mechanism.
+
+For a PHP/SQLite implementation that accepts a username directly and fetches
+the Charlotte JSON immediately, see [`php/README.md`](php/README.md).
+
+Introduction JSON uses camelCase keys. The display-name separator is
+`prettyNameDivider`; course objects use `reasonForTaking`; and the statement,
+background, and work-computer fields are grouped in `personalInfo` (including
+`personalInfo.statement`). Courses and footer links remain arrays of objects.

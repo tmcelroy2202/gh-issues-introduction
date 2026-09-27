@@ -44,6 +44,12 @@ The SQLite database is created as `introductions.sqlite3` in this directory. Set
 }
 ```
 
+Introduction exports use camelCase consistently: `prettyNameDivider` names the
+display-name separator, each course uses `reasonForTaking`, and the statement,
+background, and work-computer fields are grouped under `personalInfo`. Its
+`statement` field contains the personal statement. Legacy flat personal fields
+and `reasonfortaking` are rejected with a validation error.
+
 The API's interactive documentation is at `/docs`.
 
 For local testing, serve a JSON export at a path such as `http://127.0.0.1:9000/localuser/introduction.json` and submit that URL. Other loopback aliases and local-network hosts are rejected.

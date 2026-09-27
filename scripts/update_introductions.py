@@ -21,12 +21,19 @@ ALLOWED_HOST = "webpages.charlotte.edu"
 MAX_JSON_SIZE = 5 * 1024 * 1024
 REQUIRED_FIELDS = {
     "firstName", "lastName", "acknowledgment", "acknowledgmentDate",
-    "adjectives", "animal", "img", "caption", "personalStatement",
-    "personalBackground", "professionalBackground", "academicBackground",
-    "primaryWorkComputer", "primaryWorkLocation", "alternateComputerLocation",
+    "prettyNameDivider", "adjectives", "animal", "img", "caption", "personalInfo",
     "courses", "quote", "quoteAuthor", "footerLinks",
 }
-COURSE_FIELDS = {"department", "courseNumber", "courseTitle", "reasonfortaking"}
+PERSONAL_INFO_FIELDS = {
+    "statement", "personalBackground", "professionalBackground", "academicBackground",
+    "primaryWorkComputer", "primaryWorkLocation", "alternateComputerLocation",
+}
+COURSE_FIELDS = {"department", "courseNumber", "courseTitle", "reasonForTaking"}
+LEGACY_TOP_LEVEL_FIELDS = {
+    "divider", "personalStatement", "personalBackground", "professionalBackground",
+    "academicBackground", "primaryWorkComputer", "primaryWorkLocation",
+    "alternateComputerLocation",
+}
 USERNAME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
 def submitted_url(body: str) -> str:
     # Issue forms render input values after their matching field labels.
@@ -56,12 +63,27 @@ def username_for(url: str) -> str:
 def validate(payload: object) -> dict:
     if not isinstance(payload, dict):
         raise ValueError("The linked JSON must contain an object.")
+    legacy_fields = LEGACY_TOP_LEVEL_FIELDS.intersection(payload)
+    if legacy_fields:
+        raise ValueError(
+            "Outdated top-level keys found: " + ", ".join(sorted(legacy_fields))
+            + ". Use 'prettyNameDivider' and group statement/background/computer fields under 'personalInfo'."
+        )
     missing = REQUIRED_FIELDS - payload.keys()
     if missing:
         raise ValueError("Missing required introduction keys: " + ", ".join(sorted(missing)))
-    for key in REQUIRED_FIELDS - {"courses", "footerLinks"}:
+    for key in REQUIRED_FIELDS - {"courses", "footerLinks", "personalInfo"}:
         if not isinstance(payload[key], str):
             raise ValueError(f"'{key}' must be a string.")
+    personal_info = payload["personalInfo"]
+    if not isinstance(personal_info, dict):
+        raise ValueError("'personalInfo' must be an object.")
+    missing_personal = PERSONAL_INFO_FIELDS - personal_info.keys()
+    if missing_personal:
+        raise ValueError("'personalInfo' is missing required keys: " + ", ".join(sorted(missing_personal)))
+    for key in PERSONAL_INFO_FIELDS:
+        if not isinstance(personal_info[key], str):
+            raise ValueError(f"'personalInfo.{key}' must be a string.")
     image = payload["img"]
     image_match = re.fullmatch(r"data:image/[A-Za-z0-9.+-]+;base64,([A-Za-z0-9+/]*={0,2})", image)
     if not image_match:
@@ -74,6 +96,8 @@ def validate(payload: object) -> dict:
     if not isinstance(courses, list):
         raise ValueError("'courses' must be a list.")
     for index, course in enumerate(courses, start=1):
+        if isinstance(course, dict) and "reasonfortaking" in course:
+            raise ValueError(f"Course {index} uses 'reasonfortaking'; rename it to 'reasonForTaking'.")
         if not isinstance(course, dict) or not COURSE_FIELDS <= course.keys():
             raise ValueError(f"Course {index} is missing required course fields.")
         if any(not isinstance(course[key], str) or not course[key].strip() for key in COURSE_FIELDS):
